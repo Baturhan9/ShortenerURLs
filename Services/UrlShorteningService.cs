@@ -12,7 +12,7 @@ public class UrlShorteningService
         _context = context;
     }
 
-    public async Task<string> GenerateUniqueUrl()
+    private async Task<string> GenerateUniqueUrl()
     {
         var codeChars = new char[ShortLinkSettings.Length];
         int maxValue = ShortLinkSettings.Alphabet.Length;
@@ -31,4 +31,28 @@ public class UrlShorteningService
                 return code;
         }
     }
+
+    public async Task<string> CreateShortenedUrl(string LongUrl, HttpContext httpContext)
+    {
+        var code = await GenerateUniqueUrl();
+        var request = httpContext.Request;
+        var shortenedUrl = new ShortenedUrl()
+        {
+            Id = Guid.NewGuid(),
+            LongUrl = LongUrl,
+            Code = code,
+            ShortUrl = $"{request.Scheme}://{request.Host}/{code}",
+            CreatedOn = DateTime.UtcNow
+        };
+        _context.ShortenedUrls.Add(shortenedUrl);
+        await _context.SaveChangesAsync();
+        return shortenedUrl.ShortUrl;
+    }
+
+    public async Task<string?> GetLongUrl(string code)
+    {
+        var shortenedUrl = await _context.ShortenedUrls.SingleOrDefaultAsync(u => u.Code == code);
+        return shortenedUrl?.LongUrl ?? null;
+    }
+
 }
