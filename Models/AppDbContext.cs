@@ -8,7 +8,7 @@ public class AppDbContext : DbContext
     {
     }
 
-    DbSet<ShortenedUrl> ShortenedUrls {get;set;}
+    public DbSet<ShortenedUrl> ShortenedUrls {get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
