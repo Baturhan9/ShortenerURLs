@@ -64,7 +64,7 @@ public class UrlShorteningService
         shortenedUrl = await _context.ShortenedUrls.SingleOrDefaultAsync(u => u.Code == code);
         if(shortenedUrl is not null)
         {
-            _cache.Set(code, shortenedUrl);
+            _cache.Set(code, shortenedUrl, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
             System.Console.WriteLine("Set in cache");
         }
         return shortenedUrl?.LongUrl ?? null;
