@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
         options.UseNpgsql(connString));
     
     builder.Services.AddScoped<UrlShorteningService>();
+    builder.Services.AddMemoryCache();
 }
 var app = builder.Build();
 
